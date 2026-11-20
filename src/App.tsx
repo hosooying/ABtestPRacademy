@@ -5,6 +5,7 @@ import { AuthModal } from './components/AuthModal';
 import { CheckoutDrawer } from './components/CheckoutDrawer';
 import { Navbar } from './components/Navbar';
 import { SubscriptionCard } from './components/SubscriptionCard';
+import { SUBSCRIPTION_PLANS, UPCOMING_CLASSES } from './data/academyData';
 import { fetchCatalog, fetchCurrentUser } from './lib/api';
 import type {
   MasterclassSession,
@@ -15,9 +16,9 @@ import type {
 } from './types';
 
 export default function App() {
-  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
-  const [classes, setClasses] = useState<MasterclassSession[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [plans, setPlans] = useState<SubscriptionPlan[]>(SUBSCRIPTION_PLANS);
+  const [classes, setClasses] = useState<MasterclassSession[]>(UPCOMING_CLASSES);
+  const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [user, setUser] = useState<UserProfile | null>(null);
