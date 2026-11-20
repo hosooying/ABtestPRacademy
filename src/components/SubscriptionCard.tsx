@@ -8,8 +8,11 @@ interface SubscriptionCardProps {
   onChangeUnits: (units: number) => void;
   onSelectPlan: (plan: SubscriptionPlan, units: number) => void;
   onHighlightPlan: () => void;
+  onOpenBag: () => void;
   discountRate: number;
   isSelected?: boolean;
+  isInBag?: boolean;
+  showBestValue?: boolean;
 }
 
 export function SubscriptionCard({
@@ -18,8 +21,11 @@ export function SubscriptionCard({
   onChangeUnits,
   onSelectPlan,
   onHighlightPlan,
+  onOpenBag,
   discountRate,
   isSelected = false,
+  isInBag = false,
+  showBestValue = false,
 }: SubscriptionCardProps) {
   const standardTotal = plan.unitPrice * selectedUnits;
   const discountedUnitPrice = Math.round(plan.unitPrice * (1 - discountRate) * 100) / 100;
@@ -36,12 +42,18 @@ export function SubscriptionCard({
   return (
     <article
       onClick={onHighlightPlan}
-      className={`flex flex-col rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
+      className={`flex flex-col overflow-hidden rounded-lg transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
         isSelected
-          ? 'border-2 border-[#9F1239] ring-2 ring-[#9F1239]/15 shadow-[0_12px_28px_rgba(159,18,57,0.10)]'
-          : 'border border-[#E4E4E0] hover:border-[#A8A29E]'
+          ? 'border-[4px] border-[#9F1239] bg-[#FEFCE8] ring-2 ring-[#9F1239]/20 shadow-[0_14px_30px_rgba(159,18,57,0.12)]'
+          : 'border border-[#E4E4E0] bg-white hover:border-[#A8A29E]'
       }`}
     >
+      {showBestValue && plan.id === 'annual' && (
+        <div className="bg-[#9F1239] px-4 py-1.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+          Best Value
+        </div>
+      )}
+
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {/* Zero-pill quiet text kicker */}
         <p className="text-[11px] sm:text-xs font-medium tracking-wide text-[#78716C]">
@@ -53,7 +65,11 @@ export function SubscriptionCard({
         </h3>
 
         {/* Pricing Block with Dynamic Percentage Savings */}
-        <div className="mt-3.5 border-y border-[#ECECE8] py-3.5">
+        <div
+          className={`mt-3.5 border-y py-3.5 ${
+            isSelected ? 'border-[#E9E2C4]' : 'border-[#ECECE8]'
+          }`}
+        >
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span className="font-mono text-xl lg:text-2xl font-semibold text-[#141413] tabular-nums">
               {formatSGD(discountedUnitPrice)}
@@ -116,7 +132,13 @@ export function SubscriptionCard({
 
           {plan.billingBasis === 'ad-hoc' ? (
             /* Quantity Stepper for Single Seminar Pass */
-            <div className="flex items-center justify-between rounded-md border border-[#E4E4E0] bg-[#FAFAF9] px-2.5 py-1.5">
+            <div
+              className={`flex items-center justify-between rounded-md border px-2.5 py-1.5 ${
+                isSelected
+                  ? 'border-[#E6DFC0] bg-white/90'
+                  : 'border-[#E4E4E0] bg-[#FAFAF9]'
+              }`}
+            >
               <span className="text-[11px] lg:text-xs font-medium text-[#57534E]">
                 Quantity
               </span>
@@ -172,7 +194,9 @@ export function SubscriptionCard({
                     className={`rounded-md border px-2 py-2 text-[11px] lg:text-xs font-medium transition-colors cursor-pointer whitespace-nowrap truncate tabular-nums ${
                       active
                         ? 'border-[#141413] bg-[#141413] text-white'
-                        : 'border-[#E4E4E0] bg-[#FAFAF9] text-[#44403C] hover:border-[#A8A29E]'
+                        : isSelected
+                          ? 'border-[#E6DFC0] bg-white/90 text-[#44403C] hover:border-[#A8A29E]'
+                          : 'border-[#E4E4E0] bg-[#FAFAF9] text-[#44403C] hover:border-[#A8A29E]'
                     }`}
                   >
                     {unit} mo
@@ -206,14 +230,37 @@ export function SubscriptionCard({
               onHighlightPlan();
               onSelectPlan(plan, selectedUnits);
             }}
-            className={`w-full rounded-md px-3 lg:px-5 py-3 text-xs lg:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap truncate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F1239] ${
-              isSelected
-                ? 'bg-[#9F1239] text-white hover:bg-[#881337]'
-                : 'bg-[#141413] text-white hover:bg-[#292524]'
+            className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md px-3 lg:px-5 py-3 text-xs lg:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap truncate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F1239] ${
+              isInBag
+                ? 'bg-[#15803D] text-white hover:bg-[#166534]'
+                : isSelected
+                  ? 'bg-[#9F1239] text-white hover:bg-[#881337]'
+                  : 'bg-[#141413] text-white hover:bg-[#292524]'
             }`}
           >
-            Select {plan.name}
+            {isInBag ? (
+              <>
+                <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="truncate">Added to Bag · {plan.name}</span>
+              </>
+            ) : (
+              `Select ${plan.name}`
+            )}
           </button>
+          {isInBag && (
+            <div className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenBag();
+                }}
+                className="text-xs font-medium text-[#9F1239] underline-offset-4 hover:underline cursor-pointer"
+              >
+                View Enrollment Bag →
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </article>
