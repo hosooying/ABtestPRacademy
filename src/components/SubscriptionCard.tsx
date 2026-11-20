@@ -10,7 +10,7 @@ interface SubscriptionCardProps {
   onHighlightPlan: () => void;
   discountRate: number;
   isSelected?: boolean;
-  showBestValue?: boolean;
+  isInBag?: boolean;
 }
 
 export function SubscriptionCard({
@@ -21,7 +21,7 @@ export function SubscriptionCard({
   onHighlightPlan,
   discountRate,
   isSelected = false,
-  showBestValue = false,
+  isInBag = false,
 }: SubscriptionCardProps) {
   const standardTotal = plan.unitPrice * selectedUnits;
   const discountedUnitPrice = Math.round(plan.unitPrice * (1 - discountRate) * 100) / 100;
@@ -38,18 +38,8 @@ export function SubscriptionCard({
   return (
     <article
       onClick={onHighlightPlan}
-      className={`flex flex-col overflow-hidden rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
-        isSelected
-          ? 'border-2 border-[#9F1239] ring-2 ring-[#9F1239]/15 shadow-[0_12px_28px_rgba(159,18,57,0.10)]'
-          : 'border border-[#E4E4E0] hover:border-[#A8A29E]'
-      }`}
+      className="flex flex-col overflow-hidden rounded-lg border border-[#E4E4E0] bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-[#A8A29E] cursor-pointer"
     >
-      {showBestValue && plan.id === 'annual' && (
-        <div className="bg-[#9F1239] px-4 py-1.5 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
-          Best Value
-        </div>
-      )}
-
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {/* Zero-pill quiet text kicker */}
         <p className="text-[11px] sm:text-xs font-medium tracking-wide text-[#78716C]">
@@ -214,13 +204,22 @@ export function SubscriptionCard({
               onHighlightPlan();
               onSelectPlan(plan, selectedUnits);
             }}
-            className={`w-full rounded-md px-3 lg:px-5 py-3 text-xs lg:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap truncate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F1239] ${
-              isSelected
-                ? 'bg-[#9F1239] text-white hover:bg-[#881337]'
-                : 'bg-[#141413] text-white hover:bg-[#292524]'
+            className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md px-3 lg:px-5 py-3 text-xs lg:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap truncate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F1239] ${
+              isInBag
+                ? 'bg-[#15803D] text-white hover:bg-[#166534]'
+                : isSelected
+                  ? 'bg-[#9F1239] text-white hover:bg-[#881337]'
+                  : 'bg-[#141413] text-white hover:bg-[#292524]'
             }`}
           >
-            Select {plan.name}
+            {isInBag ? (
+              <>
+                <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="truncate">Added to Bag · {plan.name}</span>
+              </>
+            ) : (
+              `Select ${plan.name}`
+            )}
           </button>
         </div>
       </div>

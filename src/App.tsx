@@ -17,7 +17,7 @@ import type {
 } from './types';
 
 export default function App() {
-  const [abVariant] = useState(() => variant());
+  useState(() => variant());
   const [consentChoice, setConsentChoice] = useState<'granted' | 'denied' | null>(() => consent());
   const screenViewTrackedRef = useRef(false);
 
@@ -345,7 +345,7 @@ export default function App() {
                       onHighlightPlan={() => setHighlightedPlanId(plan.id)}
                       discountRate={activeDiscountRate}
                       isSelected={highlightedPlanId === plan.id}
-                      showBestValue={abVariant === 'B'}
+                      isInBag={bagPlanId === plan.id}
                     />
                   ))}
                 </div>
