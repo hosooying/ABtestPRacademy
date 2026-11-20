@@ -266,32 +266,8 @@ export function CheckoutDrawer({
                         : 'Annual Term (12 Months)'}
                   </label>
 
-                  {plan.selectableUnits.length === 1 ? (
-                    <div className="rounded border border-[#141413] bg-[#141413] px-3 py-2 text-center text-xs font-medium text-white tabular-nums">
-                      {plan.selectableUnits[0]} {plan.unitLabel}s
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-3 gap-2">
-                      {plan.selectableUnits.map((unit) => (
-                        <button
-                          key={unit}
-                          type="button"
-                          onClick={() => onChangeUnits(unit)}
-                          className={`rounded border px-3 py-2 text-xs font-medium cursor-pointer tabular-nums ${
-                            termUnits === unit
-                              ? 'border-[#141413] bg-[#141413] text-white'
-                              : 'border-[#D6D3D1] bg-white text-[#44403C] hover:border-[#141413]'
-                          }`}
-                        >
-                          {unit} {plan.unitLabel}
-                          {unit > 1 ? 's' : ''}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {plan.billingBasis === 'ad-hoc' && (
-                    <div className="mt-2.5 flex items-center justify-between rounded border border-[#D6D3D1] bg-white px-3 py-2">
+                  {plan.billingBasis === 'ad-hoc' ? (
+                    <div className="flex items-center justify-between rounded border border-[#D6D3D1] bg-white px-3 py-2">
                       <span className="text-xs font-medium text-[#44403C]">
                         Adjust Session Quantity
                       </span>
@@ -318,6 +294,28 @@ export function CheckoutDrawer({
                           <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
+                    </div>
+                  ) : plan.selectableUnits.length === 1 ? (
+                    <div className="rounded border border-[#141413] bg-[#141413] px-3 py-2 text-center text-xs font-medium text-white tabular-nums">
+                      {plan.selectableUnits[0]} {plan.unitLabel}s
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {plan.selectableUnits.map((unit) => (
+                        <button
+                          key={unit}
+                          type="button"
+                          onClick={() => onChangeUnits(unit)}
+                          className={`rounded border px-3 py-2 text-xs font-medium cursor-pointer tabular-nums ${
+                            termUnits === unit
+                              ? 'border-[#141413] bg-[#141413] text-white'
+                              : 'border-[#D6D3D1] bg-white text-[#44403C] hover:border-[#141413]'
+                          }`}
+                        >
+                          {unit} {plan.unitLabel}
+                          {unit > 1 ? 's' : ''}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>

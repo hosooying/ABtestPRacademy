@@ -114,43 +114,9 @@ export function SubscriptionCard({
             </span>
           </div>
 
-          {plan.selectableUnits.length === 1 ? (
-            <div className="rounded-md border border-[#141413] bg-[#141413] px-3 py-2 text-center text-[11px] lg:text-xs font-medium text-white tabular-nums">
-              {plan.selectableUnits[0]} months
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 gap-1.5 lg:gap-2">
-              {plan.selectableUnits.map((unit) => {
-                const active = selectedUnits === unit;
-                const shortUnit =
-                  plan.unitLabel === 'month'
-                    ? `${unit} mo`
-                    : `${unit} ${unit === 1 ? 'session' : 'sessions'}`;
-                return (
-                  <button
-                    key={unit}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onHighlightPlan();
-                      onChangeUnits(unit);
-                    }}
-                    className={`rounded-md border px-2 py-2 text-[11px] lg:text-xs font-medium transition-colors cursor-pointer whitespace-nowrap truncate tabular-nums ${
-                      active
-                        ? 'border-[#141413] bg-[#141413] text-white'
-                        : 'border-[#E4E4E0] bg-[#FAFAF9] text-[#44403C] hover:border-[#A8A29E]'
-                    }`}
-                  >
-                    {shortUnit}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Quantity Stepper for Single Seminar Pass */}
-          {plan.billingBasis === 'ad-hoc' && (
-            <div className="mt-2 flex items-center justify-between rounded-md border border-[#E4E4E0] bg-[#FAFAF9] px-2.5 py-1.5">
+          {plan.billingBasis === 'ad-hoc' ? (
+            /* Quantity Stepper for Single Seminar Pass */
+            <div className="flex items-center justify-between rounded-md border border-[#E4E4E0] bg-[#FAFAF9] px-2.5 py-1.5">
               <span className="text-[11px] lg:text-xs font-medium text-[#57534E]">
                 Quantity
               </span>
@@ -185,6 +151,34 @@ export function SubscriptionCard({
                   <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               </div>
+            </div>
+          ) : plan.selectableUnits.length === 1 ? (
+            <div className="rounded-md border border-[#141413] bg-[#141413] px-3 py-2 text-center text-[11px] lg:text-xs font-medium text-white tabular-nums">
+              {plan.selectableUnits[0]} months
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-1.5 lg:gap-2">
+              {plan.selectableUnits.map((unit) => {
+                const active = selectedUnits === unit;
+                return (
+                  <button
+                    key={unit}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onHighlightPlan();
+                      onChangeUnits(unit);
+                    }}
+                    className={`rounded-md border px-2 py-2 text-[11px] lg:text-xs font-medium transition-colors cursor-pointer whitespace-nowrap truncate tabular-nums ${
+                      active
+                        ? 'border-[#141413] bg-[#141413] text-white'
+                        : 'border-[#E4E4E0] bg-[#FAFAF9] text-[#44403C] hover:border-[#A8A29E]'
+                    }`}
+                  >
+                    {unit} mo
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
